@@ -13,7 +13,7 @@ interface LocationSelectorProps {
 
 interface City {
   name: string;
-  state: string;
+  country: string;
   lat: number;
   lng: number;
 }
@@ -24,36 +24,19 @@ const LocationSelector = ({ onLocationSelect, isLoading }: LocationSelectorProps
   const [isSearching, setIsSearching] = useState(false);
   const { toast } = useToast();
 
-  // APPCB monitoring stations in Andhra Pradesh
-  const appcbStations: City[] = [
-    { name: 'Secretariat, Amaravati', state: 'Andhra Pradesh', lat: 16.5062, lng: 80.6480 },
-    { name: 'Anam Kala Kendram, Rajamahendravaram', state: 'Andhra Pradesh', lat: 17.0005, lng: 81.7773 },
-    { name: 'GVM Corporation, Visakhapatnam', state: 'Andhra Pradesh', lat: 17.6868, lng: 83.2185 },
-    { name: 'Tirumala, Tirupati', state: 'Andhra Pradesh', lat: 13.6288, lng: 79.4192 },
-    { name: 'PWD Grounds, Vijayawada', state: 'Andhra Pradesh', lat: 16.5062, lng: 80.6480 },
-    { name: 'Gulzarpet, Anantapur', state: 'Andhra Pradesh', lat: 14.6819, lng: 77.6006 },
-    { name: 'Gangineni Cheruvu, Chittoor', state: 'Andhra Pradesh', lat: 13.2172, lng: 79.1003 },
-    { name: 'Vaikuntapuram, Tirupathi', state: 'Andhra Pradesh', lat: 13.6288, lng: 79.4192 },
-    { name: 'Kanuru, Vijayawada', state: 'Andhra Pradesh', lat: 16.5062, lng: 80.6480 },
-    { name: 'Yerramukkapalli, Kadapa', state: 'Andhra Pradesh', lat: 14.4673, lng: 78.8242 },
-    { name: 'HB Colony, Vijayawada', state: 'Andhra Pradesh', lat: 16.5062, lng: 80.6480 },
-    { name: 'Rajiv Gandhi Park, Vijayawada', state: 'Andhra Pradesh', lat: 16.5062, lng: 80.6480 },
-    { name: 'Rajiv Nagar, Vijayawada', state: 'Andhra Pradesh', lat: 16.5062, lng: 80.6480 },
+  // Mock city data - in production, this would come from a geocoding API
+  const mockCities: City[] = [
+    { name: 'New York', country: 'United States', lat: 40.7128, lng: -74.0060 },
+    { name: 'London', country: 'United Kingdom', lat: 51.5074, lng: -0.1278 },
+    { name: 'Tokyo', country: 'Japan', lat: 35.6762, lng: 139.6503 },
+    { name: 'Delhi', country: 'India', lat: 28.7041, lng: 77.1025 },
+    { name: 'Beijing', country: 'China', lat: 39.9042, lng: 116.4074 },
+    { name: 'Los Angeles', country: 'United States', lat: 34.0522, lng: -118.2437 },
+    { name: 'Mumbai', country: 'India', lat: 19.0760, lng: 72.8777 },
+    { name: 'São Paulo', country: 'Brazil', lat: -23.5505, lng: -46.6333 },
+    { name: 'Cairo', country: 'Egypt', lat: 30.0444, lng: 31.2357 },
+    { name: 'Sydney', country: 'Australia', lat: -33.8688, lng: 151.2093 },
   ];
-
-  // Additional major cities for reference
-  const majorCities: City[] = [
-    { name: 'New York', state: 'United States', lat: 40.7128, lng: -74.0060 },
-    { name: 'London', state: 'United Kingdom', lat: 51.5074, lng: -0.1278 },
-    { name: 'Tokyo', state: 'Japan', lat: 35.6762, lng: 139.6503 },
-    { name: 'Delhi', state: 'India', lat: 28.7041, lng: 77.1025 },
-    { name: 'Mumbai', state: 'India', lat: 19.0760, lng: 72.8777 },
-    { name: 'Hyderabad', state: 'India', lat: 17.3850, lng: 78.4867 },
-    { name: 'Chennai', state: 'India', lat: 13.0827, lng: 80.2707 },
-    { name: 'Bangalore', state: 'India', lat: 12.9716, lng: 77.5946 },
-  ];
-
-  const allCities = [...appcbStations, ...majorCities];
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
@@ -70,9 +53,9 @@ const LocationSelector = ({ onLocationSelect, isLoading }: LocationSelectorProps
 
     // Simulate API call delay
     setTimeout(() => {
-      const filtered = allCities.filter(city =>
+      const filtered = mockCities.filter(city =>
         city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        city.state.toLowerCase().includes(searchQuery.toLowerCase())
+        city.country.toLowerCase().includes(searchQuery.toLowerCase())
       );
       
       setSearchResults(filtered);
@@ -97,7 +80,7 @@ const LocationSelector = ({ onLocationSelect, isLoading }: LocationSelectorProps
     
     toast({
       title: "Location Selected",
-      description: `Loading AQI data for ${city.name}, ${city.state}`,
+      description: `Loading AQI data for ${city.name}, ${city.country}`,
     });
   };
 
@@ -149,7 +132,7 @@ const LocationSelector = ({ onLocationSelect, isLoading }: LocationSelectorProps
                 <MapPin className="h-4 w-4 text-blue-600" />
                 <div>
                   <div className="font-medium">{city.name}</div>
-                  <div className="text-sm text-muted-foreground">{city.state}</div>
+                  <div className="text-sm text-muted-foreground">{city.country}</div>
                 </div>
               </div>
             </Card>
@@ -157,49 +140,26 @@ const LocationSelector = ({ onLocationSelect, isLoading }: LocationSelectorProps
         </div>
       )}
 
-      {/* APPCB Monitoring Stations */}
+      {/* Popular Cities */}
       {searchResults.length === 0 && !isSearching && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">APPCB Monitoring Stations (Andhra Pradesh)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
-              {appcbStations.slice(0, 8).map((city, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleLocationClick(city)}
-                  disabled={isLoading}
-                  className="justify-start h-auto p-3 text-left hover:bg-blue-50 hover:border-blue-300"
-                >
-                  <div className="text-xs">
-                    <div className="font-medium">{city.name}</div>
-                    <div className="text-muted-foreground">APPCB Station</div>
-                  </div>
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Other Major Cities</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {majorCities.slice(0, 6).map((city, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleLocationClick(city)}
-                  disabled={isLoading}
-                  className="justify-start h-auto p-3 text-left hover:bg-blue-50 hover:border-blue-300"
-                >
-                  <div>
-                    <div className="font-medium">{city.name}</div>
-                    <div className="text-xs text-muted-foreground">{city.state}</div>
-                  </div>
-                </Button>
-              ))}
-            </div>
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-muted-foreground">Popular Cities</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {mockCities.slice(0, 6).map((city, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                onClick={() => handleLocationClick(city)}
+                disabled={isLoading}
+                className="justify-start h-auto p-3 text-left hover:bg-blue-50 hover:border-blue-300"
+              >
+                <div>
+                  <div className="font-medium">{city.name}</div>
+                  <div className="text-xs text-muted-foreground">{city.country}</div>
+                </div>
+              </Button>
+            ))}
           </div>
         </div>
       )}
