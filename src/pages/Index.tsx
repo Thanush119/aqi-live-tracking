@@ -4,7 +4,7 @@ import AQIDisplay from '@/components/AQIDisplay';
 import PredictionCharts from '@/components/PredictionCharts';
 import InteractiveMap from '@/components/InteractiveMap';
 import { Card } from '@/components/ui/card';
-import { MapPin, Eye, Thermometer } from 'lucide-react';
+import { MapPin, Eye, Thermometer, Wind } from 'lucide-react';
 
 interface LocationData {
   name: string;
