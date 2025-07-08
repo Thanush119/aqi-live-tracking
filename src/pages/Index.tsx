@@ -1,11 +1,10 @@
-
 import { useState } from 'react';
 import LocationSelector from '@/components/LocationSelector';
 import AQIDisplay from '@/components/AQIDisplay';
 import PredictionCharts from '@/components/PredictionCharts';
 import InteractiveMap from '@/components/InteractiveMap';
 import { Card } from '@/components/ui/card';
-import { MapPin, Wind, Eye, Thermometer } from 'lucide-react';
+import { MapPin, Eye, Thermometer } from 'lucide-react';
 
 interface LocationData {
   name: string;
@@ -87,14 +86,18 @@ const Index = () => {
       <div className="bg-white/80 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
-              <Wind className="h-6 w-6 text-white" />
+            <div className="bg-gradient-to-r from-teal-500 to-blue-700 p-2 rounded-lg">
+              <img 
+                src="/lovable-uploads/4debacc3-8adc-42fb-9117-b7c2b2080131.png" 
+                alt="AQI Horizon Mapper Logo" 
+                className="h-8 w-8 object-contain filter brightness-0 invert"
+              />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-blue-700 bg-clip-text text-transparent">
                 AQI Horizon Mapper
               </h1>
-              <p className="text-sm text-muted-foreground">Real-time Air Quality Monitoring & Prediction</p>
+              <p className="text-sm text-muted-foreground">APPCB Air Quality Monitoring & Prediction</p>
             </div>
           </div>
         </div>

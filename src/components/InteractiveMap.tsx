@@ -45,46 +45,62 @@ const InteractiveMap = ({ location }: InteractiveMapProps) => {
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Create a simple map visualization
-    // In production, you would integrate with Google Maps, Mapbox, or similar
+    console.log('Rendering map for location:', location);
+
+    // Create enhanced map visualization with Andhra Pradesh focus
     const mapContainer = mapRef.current;
     mapContainer.innerHTML = `
-      <div class="relative w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg overflow-hidden">
-        <div class="absolute inset-0 opacity-20">
+      <div class="relative w-full h-full bg-gradient-to-br from-green-100 to-blue-200 rounded-lg overflow-hidden border">
+        <!-- Andhra Pradesh map outline -->
+        <div class="absolute inset-0 opacity-30">
           <svg viewBox="0 0 400 300" class="w-full h-full">
-            <!-- Simplified world map paths -->
-            <path d="M50 150 Q100 100 150 150 T250 140 Q300 120 350 150 L350 250 Q300 200 250 220 Q200 240 150 220 Q100 200 50 220 Z" 
-                  fill="#3b82f6" opacity="0.3"/>
-            <path d="M80 80 Q120 60 160 80 Q200 100 240 80 Q280 60 320 80 L320 120 Q280 140 240 120 Q200 140 160 120 Q120 140 80 120 Z" 
-                  fill="#3b82f6" opacity="0.2"/>
+            <!-- Simplified Andhra Pradesh state outline -->
+            <path d="M80 50 Q120 40 160 60 Q200 45 240 55 Q280 50 320 65 L340 90 Q330 130 310 160 Q290 190 270 210 Q240 230 200 240 Q160 245 120 235 Q90 220 70 190 Q60 160 65 130 Q70 100 80 50 Z" 
+                  fill="#16a085" opacity="0.4" stroke="#0f766e" stroke-width="2"/>
+            <!-- Coastal line -->
+            <path d="M320 65 Q340 90 330 130 Q320 160 310 160" 
+                  stroke="#2563eb" stroke-width="3" fill="none"/>
           </svg>
         </div>
         
-        <!-- Location marker -->
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+        <!-- Location marker with accurate positioning -->
+        <div class="absolute z-10" style="
+          left: ${((location.lng - 77) / (84 - 77)) * 80 + 10}%; 
+          top: ${((17.8 - location.lat) / (17.8 - 13)) * 70 + 15}%;
+          transform: translate(-50%, -50%);
+        ">
           <div class="relative">
             <!-- Pulsing animation -->
-            <div class="absolute inset-0 bg-red-400 rounded-full animate-ping opacity-75" style="width: 24px; height: 24px;"></div>
+            <div class="absolute inset-0 rounded-full animate-ping opacity-75" style="
+              width: 20px; 
+              height: 20px; 
+              background-color: ${getAQIColor(location.currentAQI)};
+            "></div>
             
             <!-- Main marker -->
-            <div class="relative bg-white rounded-full p-2 shadow-lg border-2" style="border-color: ${getAQIColor(location.currentAQI)}">
-              <div class="w-4 h-4 rounded-full" style="background-color: ${getAQIColor(location.currentAQI)}"></div>
+            <div class="relative bg-white rounded-full p-1 shadow-lg border-2" style="border-color: ${getAQIColor(location.currentAQI)}">
+              <div class="w-3 h-3 rounded-full" style="background-color: ${getAQIColor(location.currentAQI)}"></div>
             </div>
             
             <!-- AQI value tooltip -->
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-black text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap">
+            <div class="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-black/90 text-white px-2 py-1 rounded text-xs whitespace-nowrap">
               <div class="text-center">
-                <div class="font-bold">${location.name}</div>
+                <div class="font-bold">${location.name.split(',')[0]}</div>
                 <div>AQI: ${location.currentAQI}</div>
               </div>
-              <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+              <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-2 border-transparent border-t-black/90"></div>
             </div>
           </div>
         </div>
         
         <!-- Coordinates display -->
-        <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg text-xs text-gray-600">
-          ${location.lat.toFixed(4)}°, ${location.lng.toFixed(4)}°
+        <div class="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs text-gray-600">
+          ${location.lat.toFixed(4)}°N, ${location.lng.toFixed(4)}°E
+        </div>
+        
+        <!-- State label -->
+        <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-semibold text-gray-700">
+          Andhra Pradesh
         </div>
       </div>
     `;
@@ -102,15 +118,15 @@ const InteractiveMap = ({ location }: InteractiveMapProps) => {
         <Card className="p-4 bg-white/90 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2">
             <MapPin className="h-4 w-4 text-blue-600" />
-            <span className="font-medium">Location Details</span>
+            <span className="font-medium">Station Details</span>
           </div>
           <div className="space-y-1 text-sm">
-            <div><strong>City:</strong> {location.name}</div>
-            <div><strong>Coordinates:</strong> {location.lat.toFixed(4)}, {location.lng.toFixed(4)}</div>
+            <div><strong>Station:</strong> {location.name}</div>
+            <div><strong>Coordinates:</strong> {location.lat.toFixed(6)}°N, {location.lng.toFixed(6)}°E</div>
             <div className="flex items-center gap-2">
-              <strong>Status:</strong>
+              <strong>Air Quality:</strong>
               <Badge 
-                className="text-white" 
+                className="text-white text-xs" 
                 style={{ backgroundColor: getAQIColor(location.currentAQI) }}
               >
                 {getAQILevel(location.currentAQI)}
